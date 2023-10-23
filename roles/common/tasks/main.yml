@@ -1,0 +1,30 @@
+---
+- name: Create Prometheus group
+  group:
+    name: "{{ prometheus_group }}"
+    state: present
+  become: yes
+
+- name: Create Prometheus user
+  user:
+    name: "{{ prometheus_user }}"
+    state: present
+    group: "{{ prometheus_group }}"
+  become: yes
+
+- name: Install required packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - curl
+    - unzip
+  become: yes
+
+- name: Create Prometheus installation directory
+  file:
+    path: "{{ prometheus_install_dir }}"
+    state: directory
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+  become: yes

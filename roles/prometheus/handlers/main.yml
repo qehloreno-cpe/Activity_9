@@ -1,0 +1,7 @@
+---
+- name: Reload Prometheus
+  systemd:
+    name: prometheus
+    state: restarted
+  async: 600
+  poll: 0

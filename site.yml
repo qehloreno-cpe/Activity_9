@@ -1,0 +1,12 @@
+---
+- name: Install Prometheus on Ubuntu
+  hosts: ubuntu
+  roles:
+    - common
+    - prometheus
+
+- name: Install Prometheus on CentOS
+  hosts: centos
+  roles:
+    - common
+    - prometheus

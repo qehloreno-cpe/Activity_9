@@ -1,0 +1,33 @@
+---
+- name: Download Prometheus tarball
+  get_url:
+    url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.{{ ansible_system | lower }}-{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}.tar.gz"
+    dest: "{{ prometheus_install_dir }}/prometheus.tar.gz"
+    mode: 0644
+  become: yes
+
+- name: Extract Prometheus tarball
+  ansible.builtin.unarchive:
+    src: "{{ prometheus_install_dir }}/prometheus.tar.gz"
+    dest: "{{ prometheus_install_dir }}"
+    remote_src: yes
+  notify:
+    - Reload Prometheus
+  become: yes
+
+- name: Create a systemd service for Prometheus
+  systemd:
+    name: prometheus
+    enabled: yes
+    state: started
+  notify:
+    - Reload Prometheus
+
+- name: Ensure Prometheus is started and enabled
+  systemd:
+    name: prometheus
+    enabled: yes
+    state: started
+  async: 600
+  poll: 0
+  become: yes
